@@ -1,19 +1,28 @@
 export default async function handler(req, res) {
   const apiKey = process.env.TOMORROW_API_KEY;
 
-  const lat = 30.2672; // Austin
+  if (!apiKey) {
+    return res.status(500).json({
+      error: "Missing TOMORROW_API_KEY in Vercel environment variables"
+    });
+  }
+
+  const lat = 30.2672;
   const lon = -97.7431;
 
+  const url =
+    `https://api.tomorrow.io/v4/timelines` +
+    `?location=${lat},${lon}` +
+    `&fields=treeIndex,grassIndex,weedIndex` +
+    `&timesteps=1d` +
+    `&units=metric` +
+    `&apikey=${apiKey}`;
+
   try {
-    const response = await fetch(
-      `https://api.tomorrow.io/v4/weather/forecast?location=${lat},${lon}&apikey=${apiKey}`
-    );
+    const response = await fetch(url);
+    const raw = await response.json();
 
-    const data = await response.json();
-
-    // TEMP: just return raw so we see structure first
-    res.status(200).json(data);
-
+    res.status(response.status).json(raw);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
