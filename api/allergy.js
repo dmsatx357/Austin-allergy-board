@@ -1,30 +1,15 @@
 export default async function handler(req, res) {
-  res.status(200).json({
-    updated: new Date().toISOString(),
-    summary: {
-      consensus: "High",
-      agreement: "Moderate",
-      mostDisputed: "Mold"
-    },
-    sources: [
-      {
-        name: "Tomorrow.io",
-        method: "Weather API available / pollen restricted",
-        oak: "Unavailable",
-        cedar: "Unavailable",
-        grass: "Unavailable",
-        mold: "Unavailable",
-        ragweed: "Unavailable"
-      },
-      {
-        name: "KVUE",
-        method: "Local allergy page / next source to parse",
-        oak: "Pending",
-        cedar: "Pending",
-        grass: "Pending",
-        mold: "Pending",
-        ragweed: "Pending"
-      }
-    ]
-  });
+  try {
+    const response = await fetch("https://www.kvue.com/allergy");
+    const html = await response.text();
+
+    // TEMP: just return a slice so we can inspect
+    res.status(200).json({
+      message: "KVUE page fetched",
+      sample: html.slice(0, 2000) // first chunk of page
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 }
