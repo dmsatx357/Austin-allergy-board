@@ -4,22 +4,67 @@
   <title>Austin Allergy Board</title>
   <style>
     body {
-      font-family: Georgia, serif;
+      margin: 0;
       background: #f4f1ea;
       color: #1f1f1f;
-      padding: 40px;
+      font-family: Georgia, "Times New Roman", serif;
     }
-    .page { max-width: 900px; margin: 0 auto; }
-    h1 { font-size: 42px; line-height: 1.05; border-bottom: 3px solid #111; padding-bottom: 18px; }
-    table { width: 100%; border-collapse: collapse; background: #fbfaf7; margin-top: 24px; }
-    th, td { border-bottom: 1px solid #c9c2b8; padding: 12px; text-align: left; font-family: Arial, sans-serif; font-size: 14px; }
-    th { border-bottom: 2px solid #111; text-transform: uppercase; font-size: 11px; }
+
+    .page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      line-height: 1.05;
+      margin-bottom: 10px;
+      border-bottom: 3px solid #111;
+      padding-bottom: 16px;
+    }
+
+    .summary {
+      font-size: 18px;
+      color: #444;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fbfaf7;
+      font-family: Arial, sans-serif;
+    }
+
+    th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      border-bottom: 2px solid #111;
+      padding: 10px;
+    }
+
+    td {
+      border-bottom: 1px solid #c9c2b8;
+      padding: 12px 10px;
+    }
+
+    tbody tr:hover {
+      background: #f0ebe2;
+    }
+
+    td:first-child {
+      font-weight: bold;
+    }
   </style>
 </head>
+
 <body>
   <div class="page">
-    <h1 id="headline">Loading allergy report...</h1>
-    <p id="summary"></p>
+    <h1 id="headline">Loading...</h1>
+    <div class="summary" id="summary"></div>
 
     <table>
       <thead>
@@ -41,21 +86,24 @@
     fetch('/api/allergy')
       .then(res => res.json())
       .then(data => {
-        document.getElementById('headline').textContent = data.summary.headline;
+        document.getElementById('headline').textContent =
+          data.summary.headline;
+
         document.getElementById('summary').textContent =
           `Consensus: ${data.summary.consensus} · Agreement: ${data.summary.agreement} · Most disputed: ${data.summary.mostDisputed}`;
 
-        document.getElementById('rows').innerHTML = data.sources.map(s => `
-          <tr>
-            <td><strong>${s.name}</strong></td>
-            <td>${s.method}</td>
-            <td>${s.tree}</td>
-            <td>${s.grass}</td>
-            <td>${s.weed}</td>
-            <td>${s.mold}</td>
-            <td>${s.status}</td>
-          </tr>
-        `).join('');
+        document.getElementById('rows').innerHTML =
+          data.sources.map(s => `
+            <tr>
+              <td>${s.name}</td>
+              <td>${s.method}</td>
+              <td>${s.tree}</td>
+              <td>${s.grass}</td>
+              <td>${s.weed}</td>
+              <td>${s.mold}</td>
+              <td>${s.status}</td>
+            </tr>
+          `).join('');
       });
   </script>
 </body>
